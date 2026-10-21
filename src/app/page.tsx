@@ -27,10 +27,10 @@ export default function Chat() {
                   </p>
                 );
               }
-              if (part.type === "tool-buscarIssues") {
+              if (part.type.startsWith("tool-")) {
                 return (
                   <details key={i} className="my-2 text-sm text-gray-500">
-                    <summary>🔍 Usó la tool buscarIssues</summary>
+                    <summary>🔧 Usó la tool {part.type.replace("tool-", "")}</summary>
                     <pre className="overflow-x-auto text-xs">{JSON.stringify(part, null, 2)}</pre>
                   </details>
                 );
