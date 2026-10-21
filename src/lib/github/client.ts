@@ -1,0 +1,42 @@
+import { GitHubError } from "./errors"
+
+export async function githubFetch(path: string): Promise<unknown> {
+    const destino = "https://api.github.com" + path 
+
+    const response = await fetch(destino, {
+        headers: {
+            Authorization: "Bearer " + process.env.GITHUB_TOKEN,
+            Accept: "application/vnd.github+json",
+        },
+        signal: AbortSignal.timeout(8000)
+    })
+
+    if (!response.ok){
+
+        switch (response.status) {
+            case 401:
+                throw new GitHubError("auth", "Token de GitHub inválido o vencido")
+
+            case 403:
+            case 429: {
+                const reset = Number(response.headers.get("x-ratelimit-reset"))
+                const ahora = Math.floor(Date.now() / 1000)
+                const segundosParaReintento = reset - ahora
+                
+                throw new GitHubError("rate_limit", "Se superó el límite de pedidos a GitHub", segundosParaReintento)
+            }
+
+            case 422:
+                throw new GitHubError("validation", "GitHub rechazó los parámetros de la búsqueda")
+            
+            case 404:
+                throw new GitHubError("not_found", "El recurso pedido no existe en GitHub")
+        
+            default:
+                throw new GitHubError("server", "GitHub respondió " + response.status)
+        }
+        
+    }
+
+    return await response.json()
+}
