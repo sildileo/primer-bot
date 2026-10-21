@@ -2,6 +2,8 @@ import { githubFetch } from "./client";
 import { GitHubError } from "./errors";
 import { GitHubSearchResponseSchema } from "./schemas";
 
+const SEIS_MESES_MS = 180 * 24 * 60 * 60 * 1000
+
 export async function searchIssues(filtros: { lenguaje: string; tema?: string }) {
 
     let query = `is:issue state:open no:assignee label:"good first issue" language:${filtros.lenguaje}`
@@ -20,5 +22,23 @@ export async function searchIssues(filtros: { lenguaje: string; tema?: string })
         throw new GitHubError("invalid_response", "Respuesta inválida del lado de GitHub")
     }
 
-    return resultado.data.items
+    const limite = Date.now() - SEIS_MESES_MS
+
+    const issues = resultado.data.items
+        .filter(issue => 
+            issue.assignee === null && 
+            new Date(issue.updated_at).getTime() > limite
+        )
+        .map(issue => ({
+            titulo: issue.title,
+            url: issue.html_url,
+            repo: issue.repository_url.replace("https://api.github.com/repos/", ""),
+            etiquetas: issue.labels.map(label => label.name),
+            comentarios: issue.comments,
+            actualizado: issue.updated_at,
+            resumen: (issue.body ?? "").slice(0, 300),
+        }))
+        .slice(0, 5)
+
+    return issues
 }
