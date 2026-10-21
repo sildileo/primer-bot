@@ -1,8 +1,7 @@
 import { githubFetch } from "@/lib/github/client";
+import { searchIssues } from "@/lib/github/searchIssues";
 
 export async function GET() {
-  const data = await githubFetch(
-    "/search/issues?q=is:issue+label:%22good+first+issue%22+language:python&per_page=2"
-  );
+  const data = await searchIssues({ lenguaje: "python", tema: "api" })
   return Response.json(data);
 }

@@ -5,7 +5,8 @@ export type GitHubErrorKind =
   | "not_found"
   | "server"
   | "timeout"
-  | "network";
+  | "network"
+  | "invalid_response"
 
 export class GitHubError extends Error {
   constructor(
