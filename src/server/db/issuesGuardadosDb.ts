@@ -1,11 +1,13 @@
 import { supabase } from "./supabase";
 
 export type IssueGuardado = {
-    url: string,
-    titulo: string,
-    repo: string,
-    etiquetas: string[]
-}
+    url: string;
+    titulo: string;
+    repo: string;
+    etiquetas: string[];
+    lenguaje?: string | null;
+    tema?: string | null;
+};
 
 export async function guardarIssue(visitorId: string, issue: IssueGuardado) {
 
@@ -15,7 +17,9 @@ export async function guardarIssue(visitorId: string, issue: IssueGuardado) {
             issue_url: issue.url,
             title: issue.titulo,
             repo: issue.repo,
-            labels: issue.etiquetas
+            labels: issue.etiquetas,
+            lenguaje: issue.lenguaje ?? null,
+            tema: issue.tema ?? null,
         })
 
     if (error) {
@@ -47,22 +51,24 @@ export async function listarIssuesGuardados(visitorId: string): Promise<IssueGua
         titulo: fila.title,
         repo: fila.repo,
         etiquetas: fila.labels,
+        lenguaje: fila.lenguaje,
+        tema: fila.tema,
     }))
 }
 
 export async function quitarIssue(visitorId: string, url: string) {
-  const { data, error } = await supabase
-    .from("saved_issues")
-    .delete()
-    .eq("visitor_id", visitorId)
-    .eq("issue_url", url)
-    .select("id");
+    const { data, error } = await supabase
+        .from("saved_issues")
+        .delete()
+        .eq("visitor_id", visitorId)
+        .eq("issue_url", url)
+        .select("id");
 
-  if (error) {
-    throw new Error("No se pudo quitar el issue: " + error.message);
-  }
+    if (error) {
+        throw new Error("No se pudo quitar el issue: " + error.message);
+    }
 
-  return data.length > 0
-    ? { quitado: true }
-    : { quitado: false, motivo: "no estaba en la cartilla" };
+    return data.length > 0
+        ? { quitado: true }
+        : { quitado: false, motivo: "no estaba en la cartilla" };
 }

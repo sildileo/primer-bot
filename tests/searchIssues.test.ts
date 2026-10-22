@@ -71,6 +71,8 @@ describe("searchIssues", () => {
       comentarios: 2,
       actualizado: expect.any(String),
       resumen: "Descripción del issue",
+      lenguaje: "python",
+      tema: null,
     });
   });
 

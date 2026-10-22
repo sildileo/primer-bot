@@ -28,6 +28,8 @@ create table saved_issues (
   labels text[] not null default '{}',
   created_at timestamptz not null default now(),
   unique (visitor_id, issue_url)   -- no guardar el mismo issue dos veces
+  lenguaje text,
+  tema text,
 );
 
 create index on conversations (visitor_id);

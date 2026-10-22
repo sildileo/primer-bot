@@ -25,8 +25,8 @@ export async function searchIssues(filtros: { lenguaje: string; tema?: string })
     const limite = Date.now() - SEIS_MESES_MS
 
     const issues = resultado.data.items
-        .filter(issue => 
-            issue.assignee === null && 
+        .filter(issue =>
+            issue.assignee === null &&
             new Date(issue.updated_at).getTime() > limite
         )
         .map(issue => ({
@@ -37,6 +37,8 @@ export async function searchIssues(filtros: { lenguaje: string; tema?: string })
             comentarios: issue.comments,
             actualizado: issue.updated_at,
             resumen: (issue.body ?? "").slice(0, 300),
+            lenguaje: filtros.lenguaje,
+            tema: filtros.tema ?? null,
         }))
         .slice(0, 5)
 

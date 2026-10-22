@@ -21,13 +21,26 @@ function ItemGuardado({
   }
 
   return (
-    <li className="flex items-start gap-2 rounded-md border border-borde bg-superficie p-3">
+    <li className="relative flex items-start gap-2 rounded-md border border-borde bg-superficie p-3 transition-colors has-[a:hover]:border-violeta has-[a:hover]:bg-violeta-tenue has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2 has-[a:focus-visible]:outline-violeta">
       <div className="min-w-0 flex-1">
+        {issue.lenguaje && (
+          <p className="mb-1.5 flex flex-wrap gap-1">
+            <span className="sr-only">Lo encontraste buscando: </span>
+            <span className="rounded bg-violeta-tenue px-1.5 py-0.5 font-mono text-[0.7rem] text-violeta-texto">
+              {issue.lenguaje}
+            </span>
+            {issue.tema && (
+              <span className="rounded border border-borde px-1.5 py-0.5 font-mono text-[0.7rem] text-tinta-suave">
+                {issue.tema}
+              </span>
+            )}
+          </p>
+        )}
         <a
           href={issue.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm font-medium leading-snug text-violeta-texto underline-offset-2 hover:underline"
+          className="text-sm font-medium leading-snug text-violeta-texto focus-visible:outline-none after:absolute after:inset-0 after:content-['']"
         >
           {issue.titulo}
           <span className="sr-only"> (se abre en otra pestaña)</span>
@@ -44,7 +57,7 @@ function ItemGuardado({
         onClick={alQuitar}
         disabled={estado === "quitando"}
         aria-label={`Quitar «${issue.titulo}» de la cartilla`}
-        className="inline-flex size-11 shrink-0 items-center justify-center rounded-md text-tinta-suave hover:bg-violeta-tenue hover:text-margen disabled:cursor-wait disabled:opacity-50"
+        className="relative z-10 inline-flex size-11 shrink-0 items-center justify-center rounded-md text-tinta-suave hover:bg-superficie hover:text-margen disabled:cursor-wait disabled:opacity-50"
       >
         <IconoCerrar className="size-4" />
       </button>

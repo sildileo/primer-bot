@@ -64,6 +64,8 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
           titulo: issue.titulo,
           repo: issue.repo,
           etiquetas: issue.etiquetas,
+          lenguaje: issue.lenguaje,
+          tema: issue.tema,
         }),
       });
       if (!respuesta.ok) return false;

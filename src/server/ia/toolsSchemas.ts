@@ -17,6 +17,8 @@ export const GuardarIssueInputSchema = z.object({
   titulo: z.string().describe("Título del issue"),
   repo: z.string().describe("Repositorio en formato dueño/repo"),
   etiquetas: z.array(z.string()).describe("Nombres de las etiquetas del issue"),
+  lenguaje: z.string().nullish().describe("Lenguaje de la búsqueda, copiado de los resultados"),
+  tema: z.string().nullish().describe("Tema de la búsqueda, copiado de los resultados (puede ser null)"),
 })
 
 export const QuitarIssueInputSchema = z.object({
