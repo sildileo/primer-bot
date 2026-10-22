@@ -57,9 +57,9 @@ function ItemGuardado({
         onClick={alQuitar}
         disabled={estado === "quitando"}
         aria-label={`Quitar «${issue.titulo}» de la cartilla`}
-        className="relative z-10 inline-flex size-11 shrink-0 items-center justify-center rounded-md text-tinta-suave hover:bg-superficie hover:text-margen disabled:cursor-wait disabled:opacity-50"
+        className="relative z-10 inline-flex size-11 shrink-0 items-center justify-center rounded-md text-tinta hover:bg-superficie hover:text-margen disabled:cursor-wait disabled:opacity-50"
       >
-        <IconoCerrar className="size-4" />
+        <IconoCerrar className="size-5" />
       </button>
     </li>
   );
