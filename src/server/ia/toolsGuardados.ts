@@ -1,6 +1,6 @@
 import { tool } from "ai";
-import { GuardarIssueInputSchema, VerGuardadosInputSchema } from "./schemas";
-import { guardarIssue as guardarEnDb, listarIssuesGuardados } from "@/lib/db/savedIssues";
+import { GuardarIssueInputSchema, VerGuardadosInputSchema } from "./toolsSchemas";
+import { guardarIssue as guardarEnDb, listarIssuesGuardados } from "@/server/db/issuesGuardadosDb";
 
 export function crearToolsDeGuardados(visitorId: string) {
   return {

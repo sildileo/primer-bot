@@ -1,4 +1,4 @@
-import { GitHubError } from "./errors"
+import { GitHubError } from "./githubErrors"
 
 export async function githubFetch(path: string, intento = 1): Promise<unknown> {
     const destino = "https://api.github.com" + path

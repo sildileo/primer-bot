@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { BuscarIssuesInputSchema, GuardarIssueInputSchema } from "@/lib/tools/schemas";
-import { errorParaElLLM } from "@/lib/tools/errors";
-import { GitHubError } from "@/lib/github/errors";
+import { BuscarIssuesInputSchema, GuardarIssueInputSchema } from "@/server/ia/toolsSchemas";
+import { errorParaElLLM } from "@/server/ia/errorParaElLLM";
+import { GitHubError } from "@/server/github/githubErrors";
 
 describe("schemas de las tools", () => {
   it("buscarIssues acepta un lenguaje sin tema", () => {

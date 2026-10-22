@@ -1,7 +1,7 @@
 import { tool } from "ai";
-import { searchIssues } from "@/lib/github/searchIssues";
-import { BuscarIssuesInputSchema } from "./schemas";
-import { errorParaElLLM } from "./errors";
+import { searchIssues } from "@/server/github/buscarIssuesEnGithub";
+import { BuscarIssuesInputSchema } from "./toolsSchemas";
+import { errorParaElLLM } from "./errorParaElLLM";
 
 export const buscarIssues = tool({
     description:

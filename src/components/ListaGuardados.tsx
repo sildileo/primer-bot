@@ -1,4 +1,4 @@
-import type { IssueGuardado } from "@/lib/db/savedIssues";
+import type { IssueGuardado } from "@/server/db/issuesGuardadosDb";
 
 export default function ListaGuardados({ guardados }: { guardados: IssueGuardado[] }) {
   if (guardados.length === 0) {

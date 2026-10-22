@@ -9,13 +9,13 @@ import {
     type UIMessage,
 } from "ai";
 import { openai } from "@ai-sdk/openai";
-import { buscarIssues } from "@/lib/tools/buscarIssues";
-import { obtenerVisitorId } from "@/lib/visitor";
-import { crearToolsDeGuardados } from "@/lib/tools/guardados";
-import { asegurarConversacion, cargarMensajes, guardarMensajes } from "@/lib/db/conversations";
-import { SYSTEM_PROMPT } from "@/lib/prompts/system";
-import { PedidoDeChatSchema } from "@/lib/chat/schemas";
-import { verificarLimite } from "@/lib/rateLimit";
+import { buscarIssues } from "@/server/ia/toolsBuscarIssues";
+import { obtenerVisitorId } from "@/server/seguridad/visitante";
+import { crearToolsDeGuardados } from "@/server/ia/toolsGuardados";
+import { asegurarConversacion, cargarMensajes, guardarMensajes } from "@/server/db/conversacionesDb";
+import { SYSTEM_PROMPT } from "@/server/ia/systemPrompt";
+import { PedidoDeChatSchema } from "@/compartido/pedidoChat";
+import { verificarLimite } from "@/server/seguridad/rateLimit";
 
 export async function POST(req: Request) {
 

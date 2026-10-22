@@ -1,4 +1,4 @@
-import type { IssueResumen } from "@/lib/github/searchIssues";
+import type { IssueResumen } from "@/server/github/buscarIssuesEnGithub";
 
 const formatoRelativo = new Intl.RelativeTimeFormat("es", { numeric: "auto" });
 const MS_POR_HORA = 1000 * 60 * 60;

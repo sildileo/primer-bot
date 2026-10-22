@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { githubFetch } from "@/lib/github/client";
-import { GitHubError } from "@/lib/github/errors";
+import { githubFetch } from "@/server/github/githubClient";
+import { GitHubError } from "@/server/github/githubErrors";
 
 function respuesta(status: number, body: unknown = {}, headers: Record<string, string> = {}) {
   return new Response(JSON.stringify(body), { status, headers });

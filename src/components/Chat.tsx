@@ -6,8 +6,8 @@ import { useState } from "react";
 import MensajeMarkdown from "@/components/MensajeMarkdown";
 import IssueCard from "@/components/IssueCard";
 import ListaGuardados from "@/components/ListaGuardados";
-import type { IssueGuardado } from "@/lib/db/savedIssues";
-import type { IssueResumen } from "@/lib/github/searchIssues";
+import type { IssueGuardado } from "@/server/db/issuesGuardadosDb";
+import type { IssueResumen } from "@/server/github/buscarIssuesEnGithub";
 
 const SUGERENCIAS = [
   "Sé un poco de Python y me interesa la web",

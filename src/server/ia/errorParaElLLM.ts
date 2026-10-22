@@ -1,4 +1,4 @@
-import { GitHubError } from "../github/errors"
+import { GitHubError } from "../github/githubErrors"
 
 export function errorParaElLLM(error: unknown) {
     if (error instanceof GitHubError) {

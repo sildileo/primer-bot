@@ -1,6 +1,6 @@
-import { githubFetch } from "./client";
-import { GitHubError } from "./errors";
-import { GitHubSearchResponseSchema } from "./schemas";
+import { githubFetch } from "./githubClient";
+import { GitHubError } from "./githubErrors";
+import { GitHubSearchResponseSchema } from "./githubSchemas";
 
 const SEIS_MESES_MS = 180 * 24 * 60 * 60 * 1000
 

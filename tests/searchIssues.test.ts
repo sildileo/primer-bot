@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { searchIssues } from "@/lib/github/searchIssues";
-import { githubFetch } from "@/lib/github/client";
-import { GitHubError } from "@/lib/github/errors";
+import { searchIssues } from "@/server/github/buscarIssuesEnGithub";
+import { githubFetch } from "@/server/github/githubClient";
+import { GitHubError } from "@/server/github/githubErrors";
 
-vi.mock("@/lib/github/client", () => ({ githubFetch: vi.fn() }));
+vi.mock("@/server/github/githubClient", () => ({ githubFetch: vi.fn() }));
 
 vi.mock("./client", () => ({ githubFetch: vi.fn() }));
 

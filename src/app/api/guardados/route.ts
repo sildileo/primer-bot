@@ -1,6 +1,6 @@
-import { obtenerVisitorId } from "@/lib/visitor";
-import { guardarIssue, listarIssuesGuardados } from "@/lib/db/savedIssues";
-import { GuardarIssueInputSchema } from "@/lib/tools/schemas";
+import { obtenerVisitorId } from "@/server/seguridad/visitante";
+import { guardarIssue, listarIssuesGuardados } from "@/server/db/issuesGuardadosDb";
+import { GuardarIssueInputSchema } from "@/server/ia/toolsSchemas";
 
 export async function GET() {
     const visitorId = await obtenerVisitorId();

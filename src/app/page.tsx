@@ -1,7 +1,7 @@
 import Chat from "@/components/Chat";
-import { leerVisitorId } from "@/lib/visitor";
-import { obtenerUltimaConversacion, cargarMensajes } from "@/lib/db/conversations";
-import { listarIssuesGuardados } from "@/lib/db/savedIssues";
+import { leerVisitorId } from "@/server/seguridad/visitante";
+import { obtenerUltimaConversacion, cargarMensajes } from "@/server/db/conversacionesDb";
+import { listarIssuesGuardados } from "@/server/db/issuesGuardadosDb";
 
 export default async function Page() {
   const visitorId = await leerVisitorId();
