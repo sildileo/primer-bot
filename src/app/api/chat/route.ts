@@ -14,10 +14,26 @@ import { obtenerVisitorId } from "@/lib/visitor";
 import { crearToolsDeGuardados } from "@/lib/tools/guardados";
 import { asegurarConversacion, cargarMensajes, guardarMensajes } from "@/lib/db/conversations";
 import { SYSTEM_PROMPT } from "@/lib/prompts/system";
+import { PedidoDeChatSchema } from "@/lib/chat/schemas";
 
 export async function POST(req: Request) {
-    const { message, id }: { message: UIMessage, id: string } = await req.json()
+
+    let body: unknown
+    try {
+        body = await req.json()
+    } catch {
+        return Response.json({ error: "Pedido inválido" }, { status: 400 })
+    }
+
+    const resultado = PedidoDeChatSchema.safeParse(body)
+
+    if (!resultado.success) {
+        return Response.json({ error: "Datos inválidos" }, { status: 400 });
+    }
+
     const visitorId = await obtenerVisitorId()
+
+    const { id, message } = resultado.data;
 
     try {
         await asegurarConversacion(id, visitorId)
@@ -48,10 +64,10 @@ export async function POST(req: Request) {
     result.consumeStream()
 
     return createUIMessageStreamResponse({
-        stream: toUIMessageStream({ 
+        stream: toUIMessageStream({
             stream: result.stream,
             originalMessages: validados,
-            generateMessageId: createIdGenerator({ prefix: "msg", size: 16}),
+            generateMessageId: createIdGenerator({ prefix: "msg", size: 16 }),
             onEnd: async ({ messages }) => {
                 try {
                     await guardarMensajes(id, messages)
