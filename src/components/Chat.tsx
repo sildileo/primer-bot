@@ -8,6 +8,7 @@ import IssueCard from "@/components/IssueCard";
 import ListaGuardados from "@/components/ListaGuardados";
 import type { IssueGuardado } from "@/server/db/issuesGuardadosDb";
 import type { IssueResumen } from "@/server/github/buscarIssuesEnGithub";
+import BotonTema from "@/components/BotonTema";
 
 const SUGERENCIAS = [
   "Sé un poco de Python y me interesa la web",
@@ -73,7 +74,10 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-6xl gap-8 px-4">
       <main className="flex min-w-0 flex-1 flex-col pt-8">
-        <h1 className="mb-6 text-2xl font-bold">PRimer</h1>
+        <header className="mb-6 flex items-center justify-between">
+          <h1 className="text-2xl font-bold">PRimer</h1>
+          <BotonTema />
+        </header>
 
         {/* En el celu, los guardados van en un desplegable arriba */}
         <details className="mb-4 md:hidden">
@@ -165,7 +169,7 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
         </div>
 
         <form
-          className="sticky bottom-0 bg-background pb-6 pt-2"
+          className="sticky bottom-0 bg-papel pb-6 pt-2"
           onSubmit={(e) => {
             e.preventDefault();
             enviar(input);

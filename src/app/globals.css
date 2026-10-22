@@ -1,27 +1,76 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* El modo oscuro lo activa la clase .dark (la pone next-themes) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---- Paleta: cartilla de cuaderno ---- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --papel: #f7f8fb;
+  --superficie: #ffffff;
+  --cuadricula: #e2e6f3;
+  --borde: #d5daea;
+  --tinta: #1b1f3b;
+  --tinta-suave: #4a5072;
+  --violeta: #7057ff;
+  --violeta-texto: #5b43e8;
+  --violeta-tenue: #eeebff;
+  --margen: #c8323f;
 }
 
+.dark {
+  --papel: #14152b;
+  --superficie: #1b1d38;
+  --cuadricula: #1f2140;
+  --borde: #2e3158;
+  --tinta: #e7e9f7;
+  --tinta-suave: #a9aecb;
+  --violeta: #9b8cff;
+  --violeta-texto: #b3a8ff;
+  --violeta-tenue: #2a2556;
+  --margen: #ff6b78;
+}
+
+/* Los colores pasan a ser clases de Tailwind: bg-papel, text-tinta, border-borde... */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-papel: var(--papel);
+  --color-superficie: var(--superficie);
+  --color-cuadricula: var(--cuadricula);
+  --color-borde: var(--borde);
+  --color-tinta: var(--tinta);
+  --color-tinta-suave: var(--tinta-suave);
+  --color-violeta: var(--violeta);
+  --color-violeta-texto: var(--violeta-texto);
+  --color-violeta-tenue: var(--violeta-tenue);
+  --color-margen: var(--margen);
+  --font-sans: var(--font-atkinson);
+  --font-mono: var(--font-atkinson-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* La hoja cuadriculada */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--papel);
+  color: var(--tinta);
+  background-image:
+    linear-gradient(var(--cuadricula) 1px, transparent 1px),
+    linear-gradient(90deg, var(--cuadricula) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Foco visible en TODO lo que se puede enfocar con teclado */
+:focus-visible {
+  outline: 2px solid var(--violeta);
+  outline-offset: 2px;
+}
+
+/* Si el sistema pide menos movimiento, apagamos animaciones y transiciones */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
