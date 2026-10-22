@@ -26,11 +26,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="es"
-      suppressHydrationWarning
-      className={`${atkinson.variable} ${atkinsonMono.variable}`}
-    >
+    <html lang="es" suppressHydrationWarning className={`${atkinson.variable} ${atkinsonMono.variable}`}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var a=JSON.parse(localStorage.getItem("primer-ajustes")||"{}");if(a.tamano)document.documentElement.dataset.tamano=a.tamano;if(a.movimiento)document.documentElement.dataset.movimiento=a.movimiento}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}

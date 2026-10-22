@@ -10,6 +10,9 @@ import BotonTema from "@/components/BotonTema";
 import type { IssueGuardado } from "@/server/db/issuesGuardadosDb";
 import type { IssueResumen } from "@/server/github/buscarIssuesEnGithub";
 import Logo from "@/components/Logo";
+import PanelLateral from "@/components/PanelLateral";
+import Ajustes from "@/components/Ajustes";
+import { IconoAjustes, IconoMenu } from "@/components/Iconos";
 
 // ---------- Constantes (afuera del componente) ----------
 
@@ -33,6 +36,8 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
   // ===== 1. Estado =====
   const [input, setInput] = useState("");
   const [guardados, setGuardados] = useState(guardadosIniciales);
+  const [menuAbierto, setMenuAbierto] = useState(false);
+  const [ajustesAbierto, setAjustesAbierto] = useState(false);
 
   // ¿El usuario está mirando el final de la conversación?
   // (useRef y no useState: cambia en cada scroll y no queremos redibujar todo)
@@ -125,18 +130,29 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
               <p className="text-sm text-tinta-suave">Tu cartilla de primeros issues</p>
             </div>
           </div>
-          <BotonTema />
-        </header>
-
-        {/* En el celu, la cartilla va en un desplegable arriba (en la tanda 2 pasa al menú ☰) */}
-        <details className="mb-6 rounded-lg border border-borde bg-superficie p-3 md:hidden">
-          <summary className="min-h-11 cursor-pointer content-center font-medium">
-            Tu cartilla ({guardados.length})
-          </summary>
-          <div className="mt-3">
-            <ListaGuardados guardados={guardados} />
+          <div className="flex items-center gap-2">
+            <BotonTema />
+            {/* Compu: botón de ajustes */}
+            <button
+              type="button"
+              onClick={() => setAjustesAbierto(true)}
+              aria-haspopup="dialog"
+              className="hidden min-h-11 items-center gap-2 rounded-md border border-borde bg-superficie px-3 text-sm hover:border-violeta md:inline-flex"
+            >
+              <IconoAjustes /> Ajustes
+            </button>
+            {/* Celu: menú ☰ */}
+            <button
+              type="button"
+              onClick={() => setMenuAbierto(true)}
+              aria-label="Abrir menú"
+              aria-haspopup="dialog"
+              className="inline-flex size-11 items-center justify-center rounded-md border border-borde bg-superficie hover:border-violeta md:hidden"
+            >
+              <IconoMenu />
+            </button>
           </div>
-        </details>
+        </header>
 
         {messages.length === 0 && (
           <section aria-labelledby="titulo-bienvenida" className="my-auto py-12 text-center">
@@ -256,6 +272,22 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
           <ListaGuardados guardados={guardados} />
         </div>
       </aside>
+      <PanelLateral abierto={menuAbierto} onCerrar={() => setMenuAbierto(false)} titulo="Menú">
+        <section className="mb-8">
+          <h3 className="mb-3 font-bold">
+            Tu cartilla <span className="font-normal text-tinta-suave">({guardados.length})</span>
+          </h3>
+          <ListaGuardados guardados={guardados} />
+        </section>
+        <section>
+          <h3 className="mb-3 font-bold">Ajustes</h3>
+          <Ajustes />
+        </section>
+      </PanelLateral>
+
+      <PanelLateral abierto={ajustesAbierto} onCerrar={() => setAjustesAbierto(false)} titulo="Ajustes">
+        <Ajustes />
+      </PanelLateral>
     </div>
   );
 }

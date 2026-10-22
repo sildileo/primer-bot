@@ -89,4 +89,25 @@ body {
     from { stroke-dashoffset: 24; }
     to { stroke-dashoffset: 0; }
   }
+
+    --animate-entrar-panel: entrar-panel 220ms ease-out;
+
+  @keyframes entrar-panel {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+}
+
+/* Tamaño de letra elegido en Ajustes: como todo usa rem, la interfaz escala entera */
+html[data-tamano="grande"] { font-size: 112.5%; }
+html[data-tamano="muy-grande"] { font-size: 125%; }
+
+/* Animaciones reducidas elegidas en Ajustes (además de la preferencia del sistema) */
+html[data-movimiento="reducido"] *,
+html[data-movimiento="reducido"] *::before,
+html[data-movimiento="reducido"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }
