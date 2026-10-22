@@ -13,6 +13,7 @@ import Logo from "@/components/Logo";
 import PanelLateral from "@/components/PanelLateral";
 import Ajustes from "@/components/Ajustes";
 import { IconoAjustes, IconoMenu } from "@/components/Iconos";
+import Compositor from "@/components/Compositor";
 
 // ---------- Constantes (afuera del componente) ----------
 
@@ -70,7 +71,7 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
   }
 
   // ===== 3. El chat =====
-  const { messages, sendMessage, status, error } = useChat({
+  const { messages, sendMessage, status, error, stop } = useChat({
     id: conversationId,
     messages: mensajesIniciales,
     transport: new DefaultChatTransport({
@@ -241,22 +242,13 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
           {error && <p className="text-sm text-margen">No se pudo obtener la respuesta. Probá de nuevo.</p>}
         </div>
 
-        <form
-          className="sticky bottom-0 bg-papel pb-6 pt-2"
-          onSubmit={(e) => {
-            e.preventDefault();
-            enviar(input);
-          }}
-        >
-          <input
-            className="w-full rounded-lg border border-borde bg-superficie p-3 text-tinta shadow-sm placeholder:text-tinta-suave"
-            value={input}
-            placeholder="Contame qué lenguajes sabés y qué te interesa…"
-            onChange={(e) => setInput(e.currentTarget.value)}
-            disabled={cargando}
-            aria-label="Mensaje para PRimer"
-          />
-        </form>
+        <Compositor
+          valor={input}
+          onCambiar={setInput}
+          onEnviar={() => enviar(input)}
+          onDetener={stop}
+          cargando={cargando}
+        />
       </main>
 
       <aside
