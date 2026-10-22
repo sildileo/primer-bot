@@ -14,6 +14,10 @@ import PanelLateral from "@/components/PanelLateral";
 import Ajustes from "@/components/Ajustes";
 import { IconoAjustes, IconoMenu } from "@/components/Iconos";
 import Compositor from "@/components/Compositor";
+import IndicadorEstado from "@/components/IndicadorEstado";
+import EsqueletosFichas from "@/components/EsqueletosFichas";
+import ErrorChat from "@/components/ErrorChat";
+import { textoDeEstado } from "@/components/estadoChat";
 
 // ---------- Constantes (afuera del componente) ----------
 
@@ -71,7 +75,7 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
   }
 
   // ===== 3. El chat =====
-  const { messages, sendMessage, status, error, stop } = useChat({
+  const { messages, sendMessage, status, error, stop, regenerate } = useChat({
     id: conversationId,
     messages: mensajesIniciales,
     transport: new DefaultChatTransport({
@@ -89,6 +93,7 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
   });
 
   const cargando = status === "submitted" || status === "streaming";
+  const textoEstado = textoDeEstado(messages, status);
   const urlsGuardadas = new Set(guardados.map((issue) => issue.url));
 
   function enviar(texto: string) {
@@ -203,7 +208,7 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
 
                 if (part.type === "tool-buscarIssues") {
                   if (part.state !== "output-available") {
-                    return <p key={i} className="text-sm text-tinta-suave">Buscando issues en GitHub…</p>;
+                    return <EsqueletosFichas key={i} />;
                   }
                   if (Array.isArray(part.output)) {
                     return (
@@ -223,14 +228,7 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
                 }
 
                 if (part.type.startsWith("tool-")) {
-                  return (
-                    <details key={i} className="my-2 text-sm text-tinta-suave">
-                      <summary className="cursor-pointer">Usó la tool {part.type.replace("tool-", "")}</summary>
-                      <pre className="mt-2 overflow-x-auto rounded-md bg-superficie p-3 font-mono text-xs">
-                        {JSON.stringify(part, null, 2)}
-                      </pre>
-                    </details>
-                  );
+                  return null; // el indicador de estado ya avisa qué hace; el detalle técnico va al panel de debug
                 }
 
                 return null;
@@ -238,8 +236,8 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
             </div>
           ))}
 
-          {cargando && <p className="text-sm text-tinta-suave">PRimer está pensando…</p>}
-          {error && <p className="text-sm text-margen">No se pudo obtener la respuesta. Probá de nuevo.</p>}
+          {textoEstado && <IndicadorEstado texto={textoEstado} />}
+          {error && <ErrorChat error={error} onReintentar={() => regenerate()} />}
         </div>
 
         <Compositor
