@@ -49,3 +49,20 @@ export async function listarIssuesGuardados(visitorId: string): Promise<IssueGua
         etiquetas: fila.labels,
     }))
 }
+
+export async function quitarIssue(visitorId: string, url: string) {
+  const { data, error } = await supabase
+    .from("saved_issues")
+    .delete()
+    .eq("visitor_id", visitorId)
+    .eq("issue_url", url)
+    .select("id");
+
+  if (error) {
+    throw new Error("No se pudo quitar el issue: " + error.message);
+  }
+
+  return data.length > 0
+    ? { quitado: true }
+    : { quitado: false, motivo: "no estaba en la cartilla" };
+}

@@ -74,6 +74,21 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
     }
   }
 
+  async function quitarDirecto(issue: IssueGuardado): Promise<boolean> {
+    try {
+      const respuesta = await fetch("/api/guardados", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: issue.url }),
+      });
+      if (!respuesta.ok) return false;
+      await recargarGuardados();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   // ===== 3. El chat =====
   const { messages, sendMessage, status, error, stop, regenerate } = useChat({
     id: conversationId,
@@ -85,10 +100,10 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
       },
     }),
     onFinish: ({ message }) => {
-      // si el bot guardó algo, actualizamos la cartilla
-      if (message.parts.some((part) => part.type === "tool-guardarIssue")) {
-        recargarGuardados();
-      }
+      const tocoLaCartilla = message.parts.some(
+        (part) => part.type === "tool-guardarIssue" || part.type === "tool-quitarIssue",
+      );
+      if (tocoLaCartilla) recargarGuardados();
     },
   });
 
@@ -259,7 +274,7 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
           <h2 id="titulo-cartilla" className="mb-4 text-lg font-bold">
             Tu cartilla <span className="font-normal text-tinta-suave">({guardados.length})</span>
           </h2>
-          <ListaGuardados guardados={guardados} />
+          <ListaGuardados guardados={guardados} onQuitar={quitarDirecto} />
         </div>
       </aside>
       <PanelLateral abierto={menuAbierto} onCerrar={() => setMenuAbierto(false)} titulo="Menú">
@@ -267,7 +282,7 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
           <h3 className="mb-3 font-bold">
             Tu cartilla <span className="font-normal text-tinta-suave">({guardados.length})</span>
           </h3>
-          <ListaGuardados guardados={guardados} />
+          <ListaGuardados guardados={guardados} onQuitar={quitarDirecto} />
         </section>
         <section>
           <h3 className="mb-3 font-bold">Ajustes</h3>

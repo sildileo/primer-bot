@@ -4,6 +4,7 @@ const TEXTO_POR_TOOL: Record<string, string> = {
   "tool-buscarIssues": "Buscando issues en GitHub…",
   "tool-guardarIssue": "Guardando en tu cartilla…",
   "tool-verGuardados": "Leyendo tu cartilla…",
+  "tool-quitarIssue": "Sacando de tu cartilla…",
 };
 
 export function textoDeEstado(mensajes: UIMessage[], status: string): string | null {

@@ -1,6 +1,64 @@
-import type { IssueGuardado } from "@/server/db/issuesGuardadosDb";
+"use client";
 
-export default function ListaGuardados({ guardados }: { guardados: IssueGuardado[] }) {
+import { useState } from "react";
+import type { IssueGuardado } from "@/server/db/issuesGuardadosDb";
+import { IconoCerrar } from "@/components/Iconos";
+
+function ItemGuardado({
+  issue,
+  onQuitar,
+}: {
+  issue: IssueGuardado;
+  onQuitar: (issue: IssueGuardado) => Promise<boolean>;
+}) {
+  const [estado, setEstado] = useState<"inicial" | "quitando" | "error">("inicial");
+
+  async function alQuitar() {
+    setEstado("quitando");
+    const salioBien = await onQuitar(issue);
+    if (!salioBien) setEstado("error");
+    // si salió bien, el item desaparece de la lista: no hace falta tocar el estado
+  }
+
+  return (
+    <li className="flex items-start gap-2 rounded-md border border-borde bg-superficie p-3">
+      <div className="min-w-0 flex-1">
+        <a
+          href={issue.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm font-medium leading-snug text-violeta-texto underline-offset-2 hover:underline"
+        >
+          {issue.titulo}
+          <span className="sr-only"> (se abre en otra pestaña)</span>
+        </a>
+        <p className="mt-1 break-words font-mono text-xs text-tinta-suave">{issue.repo}</p>
+        {estado === "error" && (
+          <p role="alert" className="mt-1 text-xs text-margen">
+            <span aria-hidden="true">⚠ </span>No se pudo quitar.
+          </p>
+        )}
+      </div>
+      <button
+        type="button"
+        onClick={alQuitar}
+        disabled={estado === "quitando"}
+        aria-label={`Quitar «${issue.titulo}» de la cartilla`}
+        className="inline-flex size-11 shrink-0 items-center justify-center rounded-md text-tinta-suave hover:bg-violeta-tenue hover:text-margen disabled:cursor-wait disabled:opacity-50"
+      >
+        <IconoCerrar className="size-4" />
+      </button>
+    </li>
+  );
+}
+
+export default function ListaGuardados({
+  guardados,
+  onQuitar,
+}: {
+  guardados: IssueGuardado[];
+  onQuitar: (issue: IssueGuardado) => Promise<boolean>;
+}) {
   if (guardados.length === 0) {
     return (
       <p className="text-sm text-tinta-suave">
@@ -12,18 +70,7 @@ export default function ListaGuardados({ guardados }: { guardados: IssueGuardado
   return (
     <ul className="flex flex-col gap-3">
       {guardados.map((issue) => (
-        <li key={issue.url} className="rounded-md border border-borde bg-superficie p-3">
-          <a
-            href={issue.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm font-medium leading-snug text-violeta-texto underline-offset-2 hover:underline"
-          >
-            {issue.titulo}
-            <span className="sr-only"> (se abre en otra pestaña)</span>
-          </a>
-          <p className="mt-1 font-mono text-xs text-tinta-suave">{issue.repo}</p>
-        </li>
+        <ItemGuardado key={issue.url} issue={issue} onQuitar={onQuitar} />
       ))}
     </ul>
   );

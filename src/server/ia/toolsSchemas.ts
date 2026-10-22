@@ -19,4 +19,8 @@ export const GuardarIssueInputSchema = z.object({
   etiquetas: z.array(z.string()).describe("Nombres de las etiquetas del issue"),
 })
 
+export const QuitarIssueInputSchema = z.object({
+  url: z.string().describe("URL del issue en GitHub, tal como aparece en la cartilla"),
+});
+
 export const VerGuardadosInputSchema = z.object({})
