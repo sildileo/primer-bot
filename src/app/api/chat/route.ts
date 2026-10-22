@@ -15,8 +15,19 @@ import { crearToolsDeGuardados } from "@/lib/tools/guardados";
 import { asegurarConversacion, cargarMensajes, guardarMensajes } from "@/lib/db/conversations";
 import { SYSTEM_PROMPT } from "@/lib/prompts/system";
 import { PedidoDeChatSchema } from "@/lib/chat/schemas";
+import { verificarLimite } from "@/lib/rateLimit";
 
 export async function POST(req: Request) {
+
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "desconocida";
+    const limite = verificarLimite(ip);
+
+    if (!limite.permitido) {
+        return Response.json(
+            { error: "Demasiados mensajes seguidos", segundosParaReintentar: limite.segundosParaReintentar },
+            { status: 429, headers: { "Retry-After": String(limite.segundosParaReintentar) } },
+        );
+    }
 
     let body: unknown
     try {
