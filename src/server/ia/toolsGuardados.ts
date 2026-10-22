@@ -1,6 +1,7 @@
 import { tool } from "ai";
 import { GuardarIssueInputSchema, VerGuardadosInputSchema } from "./toolsSchemas";
 import { guardarIssue as guardarEnDb, listarIssuesGuardados } from "@/server/db/issuesGuardadosDb";
+import { log } from "../observabilidad/log";
 
 export function crearToolsDeGuardados(visitorId: string) {
   return {
@@ -12,7 +13,7 @@ export function crearToolsDeGuardados(visitorId: string) {
             return await guardarEnDb(visitorId, issue)
         }
         catch (error){
-            console.error("guardarIssue falló:", error);
+            log("error", "tool.guardar_issue", { visitorId, error });
             return { error: "base_de_datos", mensaje: "No se pudo acceder a los issues guardados" }
         }
       },
@@ -25,7 +26,7 @@ export function crearToolsDeGuardados(visitorId: string) {
             return listarIssuesGuardados(visitorId)
         }
         catch (error){
-            console.error("verGuardados falló:", error);
+            log("error", "tool.ver_guardados", { visitorId, error });
             return { error: "base_de_datos", mensaje: "No se pudo acceder a los issues guardados" }
         }
       },
