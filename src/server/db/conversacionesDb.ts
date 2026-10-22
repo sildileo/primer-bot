@@ -82,3 +82,34 @@ export async function guardarMensajes(conversationId: string, mensajes: UIMessag
         throw new Error("No se pudieron guardar los mensajes: " + error.message);
     }
 }
+
+import type { ValorFeedback } from "@/compartido/feedback";
+
+export async function guardarFeedback(mensajeId: string, visitorId: string, valor: ValorFeedback): Promise<"ok" | "no_encontrado"> {
+
+    const { data, error } = await supabase
+        .from("messages")
+        .select("id, role, conversations!inner(visitor_id)")
+        .eq("id", mensajeId)
+        .eq("conversations.visitor_id", visitorId)
+        .maybeSingle();
+
+    if (error) {
+        throw new Error("No se pudo buscar el mensaje: " + error.message);
+    }
+
+    if (data === null || data.role !== "assistant") {
+        return "no_encontrado";
+    }
+
+    const { error: errorAlGuardar } = await supabase
+        .from("messages")
+        .update({ feedback: valor })
+        .eq("id", mensajeId);
+
+    if (errorAlGuardar) {
+        throw new Error("No se pudo guardar el feedback: " + errorAlGuardar.message);
+    }
+
+    return "ok";
+}
