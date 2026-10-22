@@ -18,3 +18,8 @@ export async function obtenerVisitorId(): Promise<string> {
   });
   return nuevo;
 }
+
+export async function leerVisitorId(): Promise<string | null> {
+  const cookieStore = await cookies();
+  return cookieStore.get(COOKIE_VISITANTE)?.value ?? null;
+}
