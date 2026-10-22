@@ -13,6 +13,7 @@ import { buscarIssues } from "@/lib/tools/buscarIssues";
 import { obtenerVisitorId } from "@/lib/visitor";
 import { crearToolsDeGuardados } from "@/lib/tools/guardados";
 import { asegurarConversacion, cargarMensajes, guardarMensajes } from "@/lib/db/conversations";
+import { SYSTEM_PROMPT } from "@/lib/prompts/system";
 
 export async function POST(req: Request) {
     const { message, id }: { message: UIMessage, id: string } = await req.json()
@@ -35,8 +36,7 @@ export async function POST(req: Request) {
 
     const result = streamText({
         model: openai("gpt-5.4-mini"),
-        system:
-            "Sos PRimer, un asistente que ayuda a estudiantes y devs junior a encontrar su primera contribución open source. Respondé en español.",
+        system: SYSTEM_PROMPT,
         messages: await convertToModelMessages(validados),
         tools,
         stopWhen: isStepCount(5),
