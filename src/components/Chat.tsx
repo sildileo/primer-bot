@@ -2,19 +2,26 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MensajeMarkdown from "@/components/MensajeMarkdown";
 import IssueCard from "@/components/IssueCard";
 import ListaGuardados from "@/components/ListaGuardados";
+import BotonTema from "@/components/BotonTema";
 import type { IssueGuardado } from "@/server/db/issuesGuardadosDb";
 import type { IssueResumen } from "@/server/github/buscarIssuesEnGithub";
-import BotonTema from "@/components/BotonTema";
+import Logo from "@/components/Logo";
+
+// ---------- Constantes (afuera del componente) ----------
 
 const SUGERENCIAS = [
   "Sé un poco de Python y me interesa la web",
   "Sé JavaScript y quiero empezar con documentación",
   "Sé TypeScript, ¿qué issue me recomendás?",
 ];
+
+const DISTANCIA_PARA_CONSIDERAR_ABAJO = 120; // en píxeles
+
+// ---------- El componente ----------
 
 type ChatProps = {
   conversationId: string;
@@ -23,28 +30,41 @@ type ChatProps = {
 };
 
 export default function Chat({ conversationId, mensajesIniciales, guardadosIniciales }: ChatProps) {
+  // ===== 1. Estado =====
   const [input, setInput] = useState("");
   const [guardados, setGuardados] = useState(guardadosIniciales);
 
+  // ¿El usuario está mirando el final de la conversación?
+  // (useRef y no useState: cambia en cada scroll y no queremos redibujar todo)
+  const pegadoAlFondo = useRef(true);
+
+  // ===== 2. Guardados =====
   async function recargarGuardados() {
     const respuesta = await fetch("/api/guardados");
     if (respuesta.ok) setGuardados(await respuesta.json());
   }
 
-  async function guardarDirecto(issue: IssueResumen) {
-    const respuesta = await fetch("/api/guardados", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        url: issue.url,
-        titulo: issue.titulo,
-        repo: issue.repo,
-        etiquetas: issue.etiquetas,
-      }),
-    });
-    if (respuesta.ok) await recargarGuardados();
+  async function guardarDirecto(issue: IssueResumen): Promise<boolean> {
+    try {
+      const respuesta = await fetch("/api/guardados", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: issue.url,
+          titulo: issue.titulo,
+          repo: issue.repo,
+          etiquetas: issue.etiquetas,
+        }),
+      });
+      if (!respuesta.ok) return false;
+      await recargarGuardados();
+      return true;
+    } catch {
+      return false; // por ejemplo, sin internet
+    }
   }
 
+  // ===== 3. El chat =====
   const { messages, sendMessage, status, error } = useChat({
     id: conversationId,
     messages: mensajesIniciales,
@@ -55,7 +75,7 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
       },
     }),
     onFinish: ({ message }) => {
-      // si el bot guardó algo, actualizamos la sidebar
+      // si el bot guardó algo, actualizamos la cartilla
       if (message.parts.some((part) => part.type === "tool-guardarIssue")) {
         recargarGuardados();
       }
@@ -67,22 +87,48 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
 
   function enviar(texto: string) {
     if (!texto.trim() || cargando) return;
+    pegadoAlFondo.current = true; // si mandás un mensaje, siempre querés ver la respuesta
     sendMessage({ text: texto });
     setInput("");
   }
 
-    return (
+  // ===== 4. Auto-scroll =====
+
+  // Escuchamos el scroll para saber si el usuario subió a leer
+  useEffect(() => {
+    function alScrollear() {
+      const distanciaAlFondo =
+        document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
+      pegadoAlFondo.current = distanciaAlFondo < DISTANCIA_PARA_CONSIDERAR_ABAJO;
+    }
+    window.addEventListener("scroll", alScrollear, { passive: true });
+    return () => window.removeEventListener("scroll", alScrollear);
+  }, []);
+
+  // Cuando cambian los mensajes (incluido cada pedacito del streaming),
+  // bajamos, pero solo si el usuario ya estaba abajo
+  useEffect(() => {
+    if (pegadoAlFondo.current) {
+      window.scrollTo({ top: document.documentElement.scrollHeight });
+    }
+  }, [messages, status]);
+
+  // ===== 5. Lo que se dibuja =====
+  return (
     <div className="mx-auto flex min-h-screen w-full max-w-6xl gap-10 px-4">
       <main className="flex min-w-0 flex-1 flex-col pt-6">
         <header className="mb-8 flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">PRimer</h1>
-            <p className="text-sm text-tinta-suave">Tu cartilla de primeros issues</p>
+          <div className="flex items-center gap-3">
+            <Logo className="size-10" />
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">PRimer</h1>
+              <p className="text-sm text-tinta-suave">Tu cartilla de primeros issues</p>
+            </div>
           </div>
           <BotonTema />
         </header>
 
-        {/* En el celu, la cartilla va en un desplegable arriba */}
+        {/* En el celu, la cartilla va en un desplegable arriba (en la tanda 2 pasa al menú ☰) */}
         <details className="mb-6 rounded-lg border border-borde bg-superficie p-3 md:hidden">
           <summary className="min-h-11 cursor-pointer content-center font-medium">
             Tu cartilla ({guardados.length})
@@ -94,6 +140,7 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
 
         {messages.length === 0 && (
           <section aria-labelledby="titulo-bienvenida" className="my-auto py-12 text-center">
+            <Logo className="mx-auto mb-6 size-20" />
             <h2 id="titulo-bienvenida" className="text-2xl font-bold tracking-tight">
               Encontrá tu primera contribución open source
             </h2>
@@ -116,7 +163,8 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
           </section>
         )}
 
-        <div className="flex flex-col gap-6 pb-6">
+        {/* mt-auto: los mensajes quedan anclados abajo, cerca del input */}
+        <div className="mt-auto flex flex-col gap-6 pb-6">
           {messages.map((message) => (
             <div
               key={message.id}

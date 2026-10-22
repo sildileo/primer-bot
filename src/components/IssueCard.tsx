@@ -1,4 +1,9 @@
+"use client";
+
+import { useState } from "react";
 import type { IssueResumen } from "@/server/github/buscarIssuesEnGithub";
+
+// ---------- Funciones de ayuda (afuera del componente) ----------
 
 const formatoRelativo = new Intl.RelativeTimeFormat("es", { numeric: "auto" });
 const MS_POR_HORA = 1000 * 60 * 60;
@@ -11,16 +16,50 @@ function haceCuanto(fechaIso: string): string {
   return formatoRelativo.format(Math.round(diferenciaHoras / 24), "day");
 }
 
+function IconoTilde({ animar }: { animar: boolean }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="size-4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M5 12.5l4.5 4.5L19 7.5" strokeDasharray="24" className={animar ? "animate-trazo" : ""} />
+    </svg>
+  );
+}
+
+// ---------- El componente ----------
+
 type IssueCardProps = {
   issue: IssueResumen;
   guardado: boolean;
-  onGuardar: () => void;
+  onGuardar: () => Promise<boolean>;
 };
 
 export default function IssueCard({ issue, guardado, onGuardar }: IssueCardProps) {
+  // 1. Estado y lógica (ANTES del return)
+  const [estado, setEstado] = useState<"inicial" | "guardando" | "error">("inicial");
+  const [recienGuardado, setRecienGuardado] = useState(false);
+
+  async function alGuardar() {
+    setEstado("guardando");
+    const salioBien = await onGuardar();
+    if (salioBien) {
+      setRecienGuardado(true);
+      setEstado("inicial");
+    } else {
+      setEstado("error");
+    }
+  }
+
+  // 2. Lo que se dibuja
   return (
     <article className="relative rounded-lg border border-borde bg-superficie py-4 pl-6 pr-4 shadow-sm">
-      {/* El borde violeta de la ficha: decorativo */}
       <span aria-hidden="true" className="absolute inset-y-3 left-0 w-1 rounded-r bg-violeta" />
 
       <h3 className="font-semibold leading-snug">
@@ -67,19 +106,36 @@ export default function IssueCard({ issue, guardado, onGuardar }: IssueCardProps
         ))}
       </ul>
 
-      <div className="mt-4">
+      <div className="mt-4 flex flex-wrap items-center gap-3">
         {guardado ? (
-          <p className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-violeta-texto">
-            <span aria-hidden="true">✓</span> En tu cartilla
+          <p
+            role={recienGuardado ? "status" : undefined}
+            className={`inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-violeta-texto ${
+              recienGuardado ? "animate-guardado" : ""
+            }`}
+          >
+            <IconoTilde animar={recienGuardado} /> En tu cartilla
           </p>
         ) : (
-          <button
-            type="button"
-            onClick={onGuardar}
-            className="min-h-11 rounded-md border border-violeta px-4 text-sm font-medium text-violeta-texto hover:bg-violeta-tenue"
-          >
-            Guardar en la cartilla
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={alGuardar}
+              disabled={estado === "guardando"}
+              className="min-h-11 rounded-md border border-violeta px-4 text-sm font-medium text-violeta-texto hover:bg-violeta-tenue disabled:cursor-wait disabled:opacity-70"
+            >
+              {estado === "guardando"
+                ? "Guardando…"
+                : estado === "error"
+                  ? "Reintentar"
+                  : "Guardar en la cartilla"}
+            </button>
+            {estado === "error" && (
+              <p role="alert" className="text-sm text-margen">
+                <span aria-hidden="true">⚠ </span>No se pudo guardar.
+              </p>
+            )}
+          </>
         )}
       </div>
     </article>
