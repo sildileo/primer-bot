@@ -42,3 +42,5 @@ export async function searchIssues(filtros: { lenguaje: string; tema?: string })
 
     return issues
 }
+
+export type IssueResumen = Awaited<ReturnType<typeof searchIssues>>[number];
