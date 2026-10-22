@@ -71,18 +71,21 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
     setInput("");
   }
 
-  return (
-    <div className="mx-auto flex min-h-screen w-full max-w-6xl gap-8 px-4">
-      <main className="flex min-w-0 flex-1 flex-col pt-8">
-        <header className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">PRimer</h1>
+    return (
+    <div className="mx-auto flex min-h-screen w-full max-w-6xl gap-10 px-4">
+      <main className="flex min-w-0 flex-1 flex-col pt-6">
+        <header className="mb-8 flex items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">PRimer</h1>
+            <p className="text-sm text-tinta-suave">Tu cartilla de primeros issues</p>
+          </div>
           <BotonTema />
         </header>
 
-        {/* En el celu, los guardados van en un desplegable arriba */}
-        <details className="mb-4 md:hidden">
-          <summary className="cursor-pointer text-sm font-medium">
-            Mis issues guardados ({guardados.length})
+        {/* En el celu, la cartilla va en un desplegable arriba */}
+        <details className="mb-6 rounded-lg border border-borde bg-superficie p-3 md:hidden">
+          <summary className="min-h-11 cursor-pointer content-center font-medium">
+            Tu cartilla ({guardados.length})
           </summary>
           <div className="mt-3">
             <ListaGuardados guardados={guardados} />
@@ -90,36 +93,40 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
         </details>
 
         {messages.length === 0 && (
-          <section className="my-auto py-12 text-center">
-            <h2 className="text-xl font-semibold">Encontrá tu primera contribución open source</h2>
-            <p className="mt-2 text-gray-500">
-              Contame qué lenguajes sabés y qué te interesa. Te busco issues pensados para principiantes.
+          <section aria-labelledby="titulo-bienvenida" className="my-auto py-12 text-center">
+            <h2 id="titulo-bienvenida" className="text-2xl font-bold tracking-tight">
+              Encontrá tu primera contribución open source
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-tinta-suave">
+              Contame qué lenguajes sabés y qué te interesa. Te busco issues pensados para quien recién empieza.
             </p>
-            <div className="mt-6 flex flex-col items-center gap-2">
+            <ul className="mt-8 flex flex-col items-center gap-2" aria-label="Ejemplos para empezar">
               {SUGERENCIAS.map((sugerencia) => (
-                <button
-                  key={sugerencia}
-                  type="button"
-                  onClick={() => enviar(sugerencia)}
-                  className="rounded-full border border-gray-300 px-4 py-2 text-sm hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-800"
-                >
-                  {sugerencia}
-                </button>
+                <li key={sugerencia}>
+                  <button
+                    type="button"
+                    onClick={() => enviar(sugerencia)}
+                    className="min-h-11 rounded-full border border-borde bg-superficie px-5 text-sm hover:border-violeta hover:text-violeta-texto"
+                  >
+                    {sugerencia}
+                  </button>
+                </li>
               ))}
-            </div>
+            </ul>
           </section>
         )}
 
-        <div className="flex flex-col gap-4 pb-6">
+        <div className="flex flex-col gap-6 pb-6">
           {messages.map((message) => (
             <div
               key={message.id}
               className={
                 message.role === "user"
-                  ? "self-end rounded-lg bg-blue-600 px-4 py-2 text-white"
+                  ? "max-w-[85%] self-end rounded-2xl rounded-br-sm bg-violeta-tenue px-4 py-2.5"
                   : "self-stretch"
               }
             >
+              <span className="sr-only">{message.role === "user" ? "Vos dijiste:" : "PRimer respondió:"}</span>
               {message.parts.map((part, i) => {
                 if (part.type === "text") {
                   return message.role === "user" ? (
@@ -131,11 +138,11 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
 
                 if (part.type === "tool-buscarIssues") {
                   if (part.state !== "output-available") {
-                    return <p key={i} className="text-sm text-gray-500">🔍 Buscando issues…</p>;
+                    return <p key={i} className="text-sm text-tinta-suave">Buscando issues en GitHub…</p>;
                   }
                   if (Array.isArray(part.output)) {
                     return (
-                      <div key={i} className="my-3 grid gap-3">
+                      <div key={i} className="my-4 grid gap-3">
                         {part.output.map((issue: IssueResumen) => (
                           <IssueCard
                             key={issue.url}
@@ -152,9 +159,11 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
 
                 if (part.type.startsWith("tool-")) {
                   return (
-                    <details key={i} className="my-2 text-sm text-gray-500">
-                      <summary>🔧 Usó la tool {part.type.replace("tool-", "")}</summary>
-                      <pre className="overflow-x-auto text-xs">{JSON.stringify(part, null, 2)}</pre>
+                    <details key={i} className="my-2 text-sm text-tinta-suave">
+                      <summary className="cursor-pointer">Usó la tool {part.type.replace("tool-", "")}</summary>
+                      <pre className="mt-2 overflow-x-auto rounded-md bg-superficie p-3 font-mono text-xs">
+                        {JSON.stringify(part, null, 2)}
+                      </pre>
                     </details>
                   );
                 }
@@ -164,8 +173,8 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
             </div>
           ))}
 
-          {cargando && <p className="text-sm text-gray-500">Pensando…</p>}
-          {error && <p className="text-sm text-red-500">Algo salió mal. Probá de nuevo.</p>}
+          {cargando && <p className="text-sm text-tinta-suave">PRimer está pensando…</p>}
+          {error && <p className="text-sm text-margen">No se pudo obtener la respuesta. Probá de nuevo.</p>}
         </div>
 
         <form
@@ -176,7 +185,7 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
           }}
         >
           <input
-            className="w-full rounded-lg border border-gray-300 bg-white p-3 text-black shadow"
+            className="w-full rounded-lg border border-borde bg-superficie p-3 text-tinta shadow-sm placeholder:text-tinta-suave"
             value={input}
             placeholder="Contame qué lenguajes sabés y qué te interesa…"
             onChange={(e) => setInput(e.currentTarget.value)}
@@ -186,9 +195,18 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
         </form>
       </main>
 
-      <aside className="sticky top-0 hidden h-screen w-72 shrink-0 overflow-y-auto pt-8 md:block">
-        <h2 className="mb-4 font-semibold">Mis issues guardados ({guardados.length})</h2>
-        <ListaGuardados guardados={guardados} />
+      <aside
+        aria-labelledby="titulo-cartilla"
+        className="sticky top-0 hidden h-screen w-80 shrink-0 overflow-y-auto py-6 md:block"
+      >
+        <div className="relative min-h-full rounded-lg border border-borde bg-superficie py-5 pl-10 pr-4 shadow-sm">
+          {/* La línea roja del margen del cuaderno: decorativa */}
+          <span aria-hidden="true" className="absolute inset-y-0 left-6 w-0.5 bg-margen opacity-70" />
+          <h2 id="titulo-cartilla" className="mb-4 text-lg font-bold">
+            Tu cartilla <span className="font-normal text-tinta-suave">({guardados.length})</span>
+          </h2>
+          <ListaGuardados guardados={guardados} />
+        </div>
       </aside>
     </div>
   );

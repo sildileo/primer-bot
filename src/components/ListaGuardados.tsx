@@ -3,8 +3,8 @@ import type { IssueGuardado } from "@/server/db/issuesGuardadosDb";
 export default function ListaGuardados({ guardados }: { guardados: IssueGuardado[] }) {
   if (guardados.length === 0) {
     return (
-      <p className="text-sm text-gray-500">
-        Todavía no guardaste issues. Tocá «Guardar» en una tarjeta o pedile al bot que te guarde uno.
+      <p className="text-sm text-tinta-suave">
+        Todavía está vacía. Guardá un issue desde una ficha o pedíselo a PRimer.
       </p>
     );
   }
@@ -12,16 +12,17 @@ export default function ListaGuardados({ guardados }: { guardados: IssueGuardado
   return (
     <ul className="flex flex-col gap-3">
       {guardados.map((issue) => (
-        <li key={issue.url} className="rounded-md border border-gray-200 p-3 dark:border-gray-700">
+        <li key={issue.url} className="rounded-md border border-borde bg-superficie p-3">
           <a
             href={issue.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400"
+            className="text-sm font-medium leading-snug text-violeta-texto underline-offset-2 hover:underline"
           >
             {issue.titulo}
+            <span className="sr-only"> (se abre en otra pestaña)</span>
           </a>
-          <p className="mt-1 text-xs text-gray-500">{issue.repo}</p>
+          <p className="mt-1 font-mono text-xs text-tinta-suave">{issue.repo}</p>
         </li>
       ))}
     </ul>
