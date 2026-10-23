@@ -12,7 +12,7 @@ import type { IssueResumen } from "@/server/github/buscarIssuesEnGithub";
 import Logo from "@/components/Logo";
 import PanelLateral from "@/components/PanelLateral";
 import Ajustes from "@/components/Ajustes";
-import { IconoAjustes, IconoMenu } from "@/components/Iconos";
+import { IconoAjustes, IconoMenu, IconoNuevo } from "@/components/Iconos";
 import Compositor from "@/components/Compositor";
 import IndicadorEstado from "@/components/IndicadorEstado";
 import EsqueletosFichas from "@/components/EsqueletosFichas";
@@ -47,6 +47,8 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
   const [guardados, setGuardados] = useState(guardadosIniciales);
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [ajustesAbierto, setAjustesAbierto] = useState(false);
+  const [conversacion, setConversacion] = useState({ id: conversationId, mensajes: mensajesIniciales });
+  const [anuncio, setAnuncio] = useState("");
 
   // ¿El usuario está mirando el final de la conversación?
   // (useRef y no useState: cambia en cada scroll y no queremos redibujar todo)
@@ -97,8 +99,8 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
 
   // ===== 3. El chat =====
   const { messages, sendMessage, status, error, stop, regenerate } = useChat<MensajePRimer>({
-    id: conversationId,
-    messages: mensajesIniciales,
+    id: conversacion.id,
+    messages: conversacion.mensajes,
     transport: new DefaultChatTransport({
       api: "/api/chat",
       prepareSendMessagesRequest({ messages, id }) {
@@ -122,6 +124,16 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
     pegadoAlFondo.current = true; // si mandás un mensaje, siempre querés ver la respuesta
     sendMessage({ text: texto });
     setInput("");
+  }
+
+  function nuevaConversacion() {
+    if (cargando) stop(); // si estaba respondiendo, cortamos
+    setConversacion({ id: crypto.randomUUID(), mensajes: [] });
+    setInput("");
+    setMenuAbierto(false);
+    setAnuncio("Empezaste una conversación nueva.");
+    // esperamos a que se redibuje y llevamos el foco a la caja de texto
+    requestAnimationFrame(() => document.getElementById("campo-mensaje")?.focus());
   }
 
   // ===== 4. Auto-scroll =====
@@ -158,6 +170,14 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={nuevaConversacion}
+              disabled={messages.length === 0}
+              className="hidden min-h-11 items-center gap-2 rounded-md border border-borde bg-superficie px-3 text-sm hover:border-violeta disabled:cursor-not-allowed disabled:opacity-50 md:inline-flex"
+            >
+              <IconoNuevo /> Nueva conversación
+            </button>
             <BotonTema />
             {/* Compu: botón de ajustes */}
             <button
@@ -267,6 +287,7 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
           {error && <ErrorChat error={error} onReintentar={() => regenerate()} />}
         </div>
 
+        <p role="status" className="sr-only">{anuncio}</p>
         <Compositor
           valor={input}
           onCambiar={setInput}
@@ -290,6 +311,14 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
         </div>
       </aside>
       <PanelLateral abierto={menuAbierto} onCerrar={() => setMenuAbierto(false)} titulo="Menú">
+        <button
+          type="button"
+          onClick={nuevaConversacion}
+          disabled={messages.length === 0}
+          className="mb-6 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-violeta px-4 font-medium text-white hover:bg-violeta-texto disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <IconoNuevo /> Nueva conversación
+        </button>
         <section className="mb-8">
           <h3 className="mb-3 font-bold">
             Tu cartilla <span className="font-normal text-tinta-suave">({guardados.length})</span>

@@ -65,3 +65,7 @@ export function IconoEnviar(props: PropsIcono) {
 export function IconoDetener(props: PropsIcono) {
     return <Base {...props}><rect x="6" y="6" width="12" height="12" rx="2" /></Base>;
 }
+
+export function IconoNuevo(props: PropsIcono) {
+  return <Base {...props}><path d="M12 5v14M5 12h14" /></Base>;
+}

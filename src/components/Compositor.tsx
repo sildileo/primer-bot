@@ -58,6 +58,7 @@ export default function Compositor({ valor, onCambiar, onEnviar, onDetener, carg
           aria-label="Mensaje para PRimer"
           aria-describedby={`${idAyuda} ${idContador}`}
           className="max-h-[200px] flex-1 resize-none bg-transparent px-2 py-2.5 text-tinta placeholder:text-tinta-suave focus:outline-none"
+          id="campo-mensaje"
         />
 
         {cargando ? (
