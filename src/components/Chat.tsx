@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, type UIMessage } from "ai";
+import { DefaultChatTransport } from "ai";
 import { useEffect, useRef, useState } from "react";
 import MensajeMarkdown from "@/components/MensajeMarkdown";
 import IssueCard from "@/components/IssueCard";
@@ -18,6 +18,9 @@ import IndicadorEstado from "@/components/IndicadorEstado";
 import EsqueletosFichas from "@/components/EsqueletosFichas";
 import ErrorChat from "@/components/ErrorChat";
 import { textoDeEstado } from "@/components/estadoChat";
+import BotonesFeedback from "@/components/BotonesFeedback";
+import PanelDebug from "@/components/PanelDebug";
+import type { MensajePRimer } from "@/compartido/metadataMensaje";
 
 // ---------- Constantes (afuera del componente) ----------
 
@@ -33,11 +36,12 @@ const DISTANCIA_PARA_CONSIDERAR_ABAJO = 120; // en píxeles
 
 type ChatProps = {
   conversationId: string;
-  mensajesIniciales: UIMessage[];
+  mensajesIniciales: MensajePRimer[];
   guardadosIniciales: IssueGuardado[];
+  feedbacksIniciales: Record<string, 1 | -1>;
 };
 
-export default function Chat({ conversationId, mensajesIniciales, guardadosIniciales }: ChatProps) {
+export default function Chat({ conversationId, mensajesIniciales, guardadosIniciales, feedbacksIniciales }: ChatProps) {
   // ===== 1. Estado =====
   const [input, setInput] = useState("");
   const [guardados, setGuardados] = useState(guardadosIniciales);
@@ -92,7 +96,7 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
   }
 
   // ===== 3. El chat =====
-  const { messages, sendMessage, status, error, stop, regenerate } = useChat({
+  const { messages, sendMessage, status, error, stop, regenerate } = useChat<MensajePRimer>({
     id: conversationId,
     messages: mensajesIniciales,
     transport: new DefaultChatTransport({
@@ -250,6 +254,12 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
 
                 return null;
               })}
+              {message.role === "assistant" && !(cargando && message.id === messages.at(-1)?.id) && (
+                <div className="mt-2 flex flex-wrap items-center gap-x-4">
+                  <BotonesFeedback mensajeId={message.id} inicial={feedbacksIniciales[message.id] ?? null} />
+                  <PanelDebug mensaje={message} />
+                </div>
+              )}
             </div>
           ))}
 

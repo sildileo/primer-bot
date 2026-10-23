@@ -30,7 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var a=JSON.parse(localStorage.getItem("primer-ajustes")||"{}");if(a.tamano)document.documentElement.dataset.tamano=a.tamano;if(a.movimiento)document.documentElement.dataset.movimiento=a.movimiento}catch(e){}`,
+            __html: `try{var a=JSON.parse(localStorage.getItem("primer-ajustes")||"{}");if(a.tamano)document.documentElement.dataset.tamano=a.tamano;if(a.movimiento)document.documentElement.dataset.movimiento=a.movimiento;if(a.detalles)document.documentElement.dataset.detalles=a.detalles}catch(e){}`,
           }}
         />
       </head>

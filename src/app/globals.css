@@ -3,6 +3,8 @@
 
 /* El modo oscuro lo activa la clase .dark (la pone next-themes) */
 @custom-variant dark (&:where(.dark, .dark *));
+/* Variante para ocultar cosas mientras los detalles técnicos estén apagados en Ajustes */
+@custom-variant detalles-ocultos (html:not([data-detalles="visibles"]) &);
 
 /* ---- Paleta: cartilla de cuaderno ---- */
 :root {
@@ -102,6 +104,13 @@ body {
   @keyframes punto {
     0%, 80%, 100% { opacity: 0.25; transform: translateY(0); }
     40% { opacity: 1; transform: translateY(-3px); }
+  }
+
+    --animate-cambio-tema: cambio-tema 400ms cubic-bezier(0.2, 0.9, 0.3, 1.2);
+
+  @keyframes cambio-tema {
+    from { opacity: 0; transform: rotate(-90deg) scale(0.5); }
+    to { opacity: 1; transform: rotate(0) scale(1); }
   }
 }
 

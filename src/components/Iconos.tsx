@@ -1,15 +1,42 @@
 type PropsIcono = { className?: string };
 
 function Base({
-    className = "size-5",
-    grosor = 2,
-    children,
-}: PropsIcono & { grosor?: number; children: React.ReactNode }) {
-    return (
-        <svg aria-hidden="true" viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={grosor} strokeLinecap="round" strokeLinejoin="round">
-            {children}
-        </svg>
-    );
+  className = "size-5",
+  grosor = 2,
+  relleno = false,
+  children,
+}: PropsIcono & { grosor?: number; relleno?: boolean; children: React.ReactNode }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className={className}
+      fill={relleno ? "currentColor" : "none"}
+      fillOpacity={relleno ? 1 : undefined}
+      stroke="currentColor"
+      strokeWidth={grosor}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {children}
+    </svg>
+  );
+}
+
+export function IconoPulgarArriba({ relleno, ...props }: PropsIcono & { relleno?: boolean }) {
+  return (
+    <Base {...props} relleno={relleno}>
+      <path d="M7 11v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1h3a4 4 0 0 0 4-4V6a2 2 0 0 1 4 0v5h3a2 2 0 0 1 2 2l-1 5a2 3 0 0 1-2 2h-7a3 3 0 0 1-3-3" />
+    </Base>
+  );
+}
+
+export function IconoPulgarAbajo({ relleno, ...props }: PropsIcono & { relleno?: boolean }) {
+  return (
+    <Base {...props} relleno={relleno}>
+      <path d="M7 13V5a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h3a4 4 0 0 1 4 4v1a2 2 0 0 0 4 0v-5h3a2 2 0 0 0 2-2l-1-5a2 3 0 0 0-2-2h-7a3 3 0 0 0-3 3" />
+    </Base>
+  );
 }
 
 export function IconoCerrar(props: PropsIcono) {

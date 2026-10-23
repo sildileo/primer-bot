@@ -1,5 +1,6 @@
 import type { UIMessage } from "ai"
 import { supabase } from "./supabase"
+import type { MensajePRimer } from "@/compartido/metadataMensaje";
 
 export async function obtenerUltimaConversacion(visitorId: string): Promise<string | null> {
 
@@ -47,7 +48,7 @@ export async function asegurarConversacion(id: string, visitorId: string): Promi
     }
 }
 
-export async function cargarMensajes(conversationId: string): Promise<UIMessage[]> {
+export async function cargarMensajes(conversationId: string): Promise<MensajePRimer[]> {
     const { data, error } = await supabase
         .from("messages")
         .select("id, role, parts, metadata")
@@ -112,4 +113,18 @@ export async function guardarFeedback(mensajeId: string, visitorId: string, valo
     }
 
     return "ok";
+}
+
+export async function cargarFeedbacks(conversationId: string): Promise<Record<string, 1 | -1>> {
+  const { data, error } = await supabase
+    .from("messages")
+    .select("id, feedback")
+    .eq("conversation_id", conversationId)
+    .not("feedback", "is", null);
+
+  if (error) {
+    throw new Error("No se pudieron cargar los votos: " + error.message);
+  }
+
+  return Object.fromEntries(data.map((fila) => [fila.id, fila.feedback]));
 }
