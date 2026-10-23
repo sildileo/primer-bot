@@ -11,20 +11,20 @@
   --papel: #f7f8fb;
   --superficie: #ffffff;
   --cuadricula: #e2e6f3;
-  --borde: #d5daea;
+  --borde: #c9cfe3;
   --tinta: #1b1f3b;
   --tinta-suave: #4a5072;
   --violeta: #7a4ff5;
   --violeta-texto: #6338e0;
-  --violeta-tenue: #f0e9ff;
+  --violeta-tenue: #ebe2ff;
   --margen: #c8323f;
 }
 
 .dark {
-  --papel: #14152b;
-  --superficie: #1b1d38;
-  --cuadricula: #1f2140;
-  --borde: #2e3158;
+  --papel: #0f1023;
+  --superficie: #171930;
+  --cuadricula: #1a1c36;
+  --borde: #2a2d50;
   --tinta: #e7e9f7;
   --tinta-suave: #a9aecb;
   --violeta: #a98bff;

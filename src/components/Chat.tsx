@@ -160,8 +160,8 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
   // ===== 5. Lo que se dibuja =====
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-6xl gap-10 px-4">
-      <main className="flex min-w-0 flex-1 flex-col pt-6">
-        <header className="mb-8 flex items-center justify-between gap-4">
+      <main className="flex min-w-0 flex-1 flex-col pt-2">
+        <header className="sticky top-2 z-20 -mx-2 mb-6 flex items-center justify-between gap-4 rounded-xl border border-borde bg-papel/90 px-3 py-1.5 shadow-sm backdrop-blur">
           <div className="flex items-center gap-3">
             <Logo className="size-10" />
             <div>
@@ -233,7 +233,7 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
               key={message.id}
               className={
                 message.role === "user"
-                  ? "max-w-[85%] self-end rounded-2xl rounded-br-sm bg-violeta-tenue px-4 py-2.5"
+                  ? "max-w-[85%] self-end rounded-2xl rounded-br-sm border border-violeta/25 bg-violeta-tenue px-4 py-2.5"
                   : "self-stretch"
               }
             >
@@ -315,19 +315,26 @@ export default function Chat({ conversationId, mensajesIniciales, guardadosInici
           type="button"
           onClick={nuevaConversacion}
           disabled={messages.length === 0}
-          className="mb-6 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-violeta px-4 font-medium text-white hover:bg-violeta-texto disabled:cursor-not-allowed disabled:opacity-50"
+          className="mb-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-violeta px-4 font-medium text-white hover:bg-violeta-texto disabled:cursor-not-allowed disabled:opacity-50"
         >
           <IconoNuevo /> Nueva conversación
         </button>
-        <section className="mb-8">
+
+        <details className="group mb-6 rounded-lg border border-borde bg-superficie">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between px-3 font-bold">
+            Ajustes
+            <span aria-hidden="true" className="transition-transform group-open:rotate-90">▸</span>
+          </summary>
+          <div className="border-t border-borde p-3">
+            <Ajustes />
+          </div>
+        </details>
+
+        <section>
           <h3 className="mb-3 font-bold">
             Tu cartilla <span className="font-normal text-tinta-suave">({guardados.length})</span>
           </h3>
           <ListaGuardados guardados={guardados} onQuitar={quitarDirecto} />
-        </section>
-        <section>
-          <h3 className="mb-3 font-bold">Ajustes</h3>
-          <Ajustes />
         </section>
       </PanelLateral>
 
