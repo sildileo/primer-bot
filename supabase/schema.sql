@@ -1,10 +1,9 @@
--- Conversaciones de anónimos
+-- Conversaciones de cada visitante anónimo
 create table conversations (
   id uuid primary key default gen_random_uuid(),
   visitor_id text not null,
   title text,
-  created_at timestamptz not null default now(),
-  column posicion integer not null default 0
+  created_at timestamptz not null default now()
 );
 
 -- Mensajes de cada conversación
@@ -13,8 +12,9 @@ create table messages (
   conversation_id uuid not null references conversations(id) on delete cascade,
   role text not null check (role in ('user', 'assistant', 'system')),
   parts jsonb not null,                -- contenido completo: texto + tools usadas
-  metadata jsonb,                      -- tokens, tiempos (para el panel de debug)
+  metadata jsonb,                      -- tokens y tiempos (para el panel de debug)
   feedback smallint check (feedback in (-1, 1)),
+  posicion integer not null default 0, -- orden dentro de la conversación
   created_at timestamptz not null default now()
 );
 
@@ -26,14 +26,14 @@ create table saved_issues (
   title text not null,
   repo text not null,
   labels text[] not null default '{}',
-  created_at timestamptz not null default now(),
-  unique (visitor_id, issue_url)   -- no guardar el mismo issue dos veces
-  lenguaje text,
+  lenguaje text,                       -- búsqueda con la que se encontró
   tema text,
+  created_at timestamptz not null default now(),
+  unique (visitor_id, issue_url)       -- no guardar el mismo issue dos veces
 );
 
 create index on conversations (visitor_id);
-create index on messages (conversation_id, created_at);
+create index on messages (conversation_id, posicion);
 create index on saved_issues (visitor_id);
 
 -- RLS activado y sin políticas: nadie puede leer desde el navegador.

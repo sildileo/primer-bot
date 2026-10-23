@@ -182,7 +182,7 @@ Criterios de aceptación:
 - **Contraste AA** calculado para todos los textos, en los dos temas.
 - **Navegación completa con teclado:** foco visible en todo, paneles con `<dialog>` nativo (el foco queda adentro, Esc cierra y el foco vuelve al botón que lo abrió) y tarjetas de la cartilla con *stretched link*, sin elementos interactivos anidados.
 - **Lectores de pantalla:** `lang="es"`, regiones con título, quién habla en cada mensaje, estados anunciados con `role="status"` y errores con `role="alert"`, y aviso de los links que se abren en otra pestaña.
-- **Nunca solo color:** cada estado lleva ícono o texto (✓ En tu cartilla, ⚠ No se pudo guardar, el pulgar relleno). Verificado con el simulador de daltonismo de Firefox. <!-- TODO: confirmar que lo probaste -->
+- **Nunca solo color:** cada estado lleva ícono o texto (✓ En tu cartilla, ⚠ No se pudo guardar, el pulgar relleno). Verificado con el simulador de daltonismo de Firefox.
 - **Ajustes:** tamaño de letra (hasta 125%, y toda la interfaz escala), tema y animaciones reducidas. Se respeta también `prefers-reduced-motion` del sistema.
 - **Botones de al menos 44 px** para tocar cómodo en el celular.
 

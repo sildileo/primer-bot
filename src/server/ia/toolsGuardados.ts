@@ -25,7 +25,7 @@ export function crearToolsDeGuardados(visitorId: string) {
       inputSchema: VerGuardadosInputSchema,
       execute: async () => {
         try {
-          return listarIssuesGuardados(visitorId)
+          return await listarIssuesGuardados(visitorId)
         }
         catch (error) {
           log("error", "tool.ver_guardados", { visitorId, error });
