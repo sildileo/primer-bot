@@ -8,6 +8,13 @@ export const BuscarIssuesInputSchema = z.object({
     .string()
     .optional()
     .describe("Tema o área de interés en una o dos palabras, por ejemplo: web, api, docs"),
+  pagina: z
+    .number()
+    .int()
+    .min(1)
+    .max(10)
+    .optional()
+    .describe("Página de resultados. Usá 2, 3, etc. cuando el usuario pida más o distintos issues de la misma búsqueda."),
 })
 
 export type BuscarIssuesInput = z.infer<typeof BuscarIssuesInputSchema>

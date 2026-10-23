@@ -4,7 +4,7 @@ import { GitHubSearchResponseSchema } from "./githubSchemas";
 
 const SEIS_MESES_MS = 180 * 24 * 60 * 60 * 1000
 
-export async function searchIssues(filtros: { lenguaje: string; tema?: string }) {
+export async function searchIssues(filtros: { lenguaje: string; tema?: string; pagina?: number }) {
 
     let query = `is:issue state:open no:assignee label:"good first issue" language:${filtros.lenguaje}`
 
@@ -13,7 +13,7 @@ export async function searchIssues(filtros: { lenguaje: string; tema?: string })
     }
 
     const queryCodificada = encodeURIComponent(query)
-    const url = "/search/issues?q=" + queryCodificada + "&sort=updated&per_page=20"
+    const url = "/search/issues?q=" + queryCodificada + "&sort=updated&per_page=20&page=" + (filtros.pagina ?? 1);
 
     const json = await githubFetch(url)
     const resultado = GitHubSearchResponseSchema.safeParse(json)

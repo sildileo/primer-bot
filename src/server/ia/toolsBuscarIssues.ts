@@ -7,9 +7,9 @@ export const buscarIssues = tool({
     description:
         "Busca en GitHub issues abiertos aptos para principiantes (good first issue) según el lenguaje de programación y, opcionalmente, un tema de interés.",
     inputSchema: BuscarIssuesInputSchema,
-    execute: async ({ lenguaje, tema }) => {
+    execute: async ({ lenguaje, tema, pagina }) => {
         try {
-            return await searchIssues( {lenguaje, tema} )
+            return await searchIssues({ lenguaje, tema, pagina });
         }
         catch (error) {
             return errorParaElLLM(error)
