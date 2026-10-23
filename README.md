@@ -2,7 +2,7 @@
 
 > Tu cartilla de primeros issues: un asistente con IA que te ayuda a encontrar tu primera contribución open source.
 
-🔗 **Demo:** Próximamente
+🔗 **Demo:** https://primer-bot.vercel.app/
 
 ![PRimer en modo claro: una búsqueda con fichas de issues y la cartilla al costado](docs/capturas/busqueda-claro.png)
 
